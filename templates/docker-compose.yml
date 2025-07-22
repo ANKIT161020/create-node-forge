@@ -1,0 +1,45 @@
+# nodejs-monolith-template/docker-compose.yml
+
+version: '3.8' # Specify Docker Compose file format version
+
+services:
+  # Node.js Application Service
+  app:
+    build:
+      context: . # Build from the current directory (where Dockerfile is)
+      dockerfile: Dockerfile # Specify the Dockerfile to use
+      target: builder # Use the 'builder' stage for development (to include dev dependencies)
+    ports:
+      - '5000:5000' # Map host port 5000 to container port 5000
+    volumes:
+      - .:/app # Mount the current host directory into the container's /app directory
+      - /app/node_modules # Exclude node_modules from the bind mount to prevent host/container conflicts
+    environment:
+      # Inject environment variables directly for local dev
+      # These will override values in .env if present, or act as defaults
+      # For sensitive data, use Docker secrets in production
+      NODE_ENV: development
+      PORT: 5000
+      MONGODB_URI: mongodb://mongodb:27017/my_app_dev # Connect to the 'mongodb' service
+      MONGODB_URI_TEST: mongodb://mongodb:27017/my_app_test # For running tests inside container
+      JWT_SECRET: your_dev_jwt_secret # Use a dev secret for local development
+      JWT_ACCESS_EXPIRATION_MINUTES: 30
+      JWT_REFRESH_EXPIRATION_DAYS: 7
+    depends_on:
+      - mongodb # Ensure mongodb service starts before the app service
+    command: npm run dev # Override the CMD in Dockerfile to run dev script
+
+  # MongoDB Database Service
+  mongodb:
+    image: mongo:6.0 # Use a specific MongoDB version
+    ports:
+      - '27017:27017' # Map host port 27017 to container port 27017
+    volumes:
+      - mongodb_data:/data/db # Persist MongoDB data to a named volume
+    environment:
+      # Optional: MongoDB authentication (recommended for production)
+      # MONGO_INITDB_ROOT_USERNAME: root
+      # MONGO_INITDB_ROOT_PASSWORD: password
+
+volumes:
+  mongodb_data: # Define the named volume for MongoDB data persistence

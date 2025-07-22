@@ -1,0 +1,55 @@
+{
+  "name": "create-node-forge",
+  "version": "0.1.0",
+  "description": "Scaffold robust, production-ready Node.js backend applications with TypeScript, Express, and best practices. A powerful CLI to quickly bootstrap your next API project.",
+  "type": "module",
+  "main": "plopfile.js",
+  "bin": {
+    "create-node-forge": "./bin/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "plop"
+  },
+  "keywords": [
+    "node",
+    "nodejs",
+    "express",
+    "typescript",
+    "template",
+    "cli",
+    "scaffolding",
+    "backend",
+    "api",
+    "monolithic",
+    "starter",
+    "boilerplate",
+    "generator",
+    "best-practices",
+    "production-ready"
+  ],
+  "author": "Ankit https://github.com/ANKIT161020",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^9.2.23",
+    "plop": "^4.0.1"
+  },
+  "files": [
+    "bin/",
+    "templates/",
+    "plopfile.js"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ANKIT161020/create-node-forge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ANKIT161020/create-node-forge/issues"
+  },
+  "homepage": "https://github.com/ANKIT161020/create-node-forge#readme"
+}

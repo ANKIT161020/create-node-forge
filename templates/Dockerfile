@@ -1,0 +1,51 @@
+# --- Stage 1: Build the application ---
+# Use a Node.js image with a specific version for consistency.
+# Using 'alpine' for smaller image size.
+FROM node:20-alpine AS builder
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json (or yarn.lock) to leverage Docker cache
+# This means npm install will only run if package.json or lock file changes
+COPY package.json yarn.lock* ./
+
+# Install dependencies. Use 'npm ci' for clean install from package-lock.json
+# or 'yarn install --frozen-lockfile' for yarn.
+# Using npm for consistency with package.json
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy the rest of the application source code
+COPY . .
+
+# Build the TypeScript application
+# This uses your tsconfig.build.json
+RUN npm run build
+
+# --- Stage 2: Create the final production image ---
+# Use a lightweight runtime image for the final application
+FROM node:20-alpine
+
+# Set the working directory
+WORKDIR /app
+
+# Copy only the necessary files from the builder stage
+# This includes node_modules (production only) and the compiled 'dist' folder
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package.json ./package.json # Copy package.json for 'npm start'
+
+# Expose the port your app runs on (default 5000 from config)
+EXPOSE 5000
+
+# Set the NODE_ENV to production
+ENV NODE_ENV=production
+
+# Command to run the application
+# 'npm start' executes 'node dist/server.js' as defined in package.json
+CMD ["npm", "start"]
+
+# Healthcheck (optional but recommended for container orchestration)
+# This checks if your /api/health endpoint is reachable
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD wget --quiet --tries=1 --timeout=5 -O /dev/null http://localhost:5000/api/health || exit 1

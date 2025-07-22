@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist", // Output compiled JS to dist
+    "rootDir": "./src", // Source files are in src
+    "module": "CommonJS", // CommonJS for Node.js runtime
+    "noEmitOnError": true, // Do not emit output if there are errors
+    "declaration": false, // No need for .d.ts files in dist for runtime
+    "removeComments": true // Remove comments from compiled JS
+  },
+  "include": ["src/**/*.ts"], // Only include actual source files for build
+  "exclude": ["node_modules", "dist", "__tests__"] // Exclude tests from production build
+}

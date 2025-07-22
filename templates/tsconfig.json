@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", // Updated target for modern Node.js environments
+    "module": "NodeNext", // CHANGED: Use NodeNext for ES Module output
+    "moduleResolution": "NodeNext", // CHANGED: Use NodeNext for module resolution
+    "lib": ["ES2022"], // Updated lib to match target
+    "outDir": "./dist",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "baseUrl": "./src", // Allows absolute imports from src/
+    "paths": {
+      "@config/*": ["config/*"],
+      "@controllers/*": ["controllers/*"],
+      "@middleware/*": ["middleware/*"],
+      "@models/*": ["models/*"],
+      "@repositories/*": ["repositories/*"],
+      "@routes/*": ["routes/*"],
+      "@services/*": ["services/*"],
+      "@types/*": ["types/*"],
+      "@utils/*": ["utils/*"],
+      "@api/*": ["api/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "__tests__/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
