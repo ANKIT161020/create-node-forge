@@ -1,6 +1,6 @@
 {
   "name": "create-node-forge",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Scaffold robust, production-ready Node.js backend applications with TypeScript, Express, and best practices. A powerful CLI to quickly bootstrap your next API project.",
   "type": "module",
   "main": "plopfile.js",
