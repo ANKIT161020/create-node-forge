@@ -1,0 +1,121 @@
+// templates/common/src/app.ts.hbs
+
+// Express application setup
+import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import morgan from 'morgan';
+import httpStatus from 'http-status';
+import compression from 'compression';
+import mongoSanitize from 'express-mongo-sanitize';
+
+// Conditional Swagger Imports
+{{#if includeSwagger}}
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+{{/if}}
+
+// Core Middleware Imports (adjust paths based on new structure)
+import apiLimiter from '@middleware/rateLimit.middleware'; // From src/middleware
+import { errorConverter, errorHandler } from '@middleware/error.middleware'; // From src/middleware
+import notFound from '@middleware/notFound.middleware'; // From src/middleware
+
+// API Routes Import (adjust path)
+import apiRoutes from '@api/index'; // From src/api
+
+// Config Imports (adjust paths)
+import logger from '@utils/logger'; // From src/config
+import config from '@config/index'; // From src/config
+
+// Conditional Swagger Options Import
+{{#if includeSwagger}}
+import swaggerOptions from '@config/swagger'; // From src/config/swagger.ts
+{{/if}}
+
+import fs from 'fs';
+import path from 'path';
+
+const app = express();
+
+// Set security HTTP headers
+app.use(helmet());
+
+// Enable CORS
+app.use(cors());
+// For specific origins in production:
+// app.use(cors({
+// origin: 'https://your-frontend.com',
+// methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+// credentials: true
+// }));
+
+// This middleware will serve files like favicon.ico, images, etc.
+// from the 'public' folder at the root of your project.
+// Adjust path: public is at project root, app.ts is in src/
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
+// HTTP request logger
+if (config.env === 'development') { // Use config.env from config
+app.use(morgan('dev')); // Concise output colored by response status
+} else if (config.env === 'production') { // Use config.env from config
+app.use(morgan('combined', { stream: { write: (message) => logger.info(message.trim()) } }));
+}
+
+// Parse JSON request body
+app.use(express.json());
+
+// Parse URL-encoded request body
+app.use(express.urlencoded({ extended: true }));
+
+// This should come after body parsers (express.json, express.urlencoded)
+app.use(mongoSanitize());
+
+// Compress all responses (should be placed early in the middleware chain)
+app.use(compression());
+
+// Serve README.md from the project root
+app.get('/', (req, res) => {
+// Path from app.ts (in src/) to project root README.md
+const readmePath = path.join(__dirname, '..', 'README.md');
+fs.readFile(readmePath, 'utf8', (err, data) => {
+if (err) {
+logger.error('Error reading README.md:', err);
+// Fallback to a simple message if README can't be read
+return res
+.status(httpStatus.INTERNAL_SERVER_ERROR)
+.send('Welcome to the API! Documentation is available at /api-docs');
+}
+// Set content type to Markdown for better rendering in some tools/browsers
+res.setHeader('Content-Type', 'text/plain; charset=utf-8'); // Use text/plain for raw markdown
+res.send(data);
+});
+});
+
+// Apply rate limiting to all API requests
+app.use('/api', apiLimiter);
+
+// API routes
+app.use('/api', apiRoutes);
+
+// Swagger API Documentation (only in development/non-production environments)
+{{#if includeSwagger}}
+if (config.env !== 'production') { // Use config.env from config
+const specs = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+logger.info(`SWAGGER: API Docs Available`,{
+meta:{
+DOC_URL:`http://localhost:${config.port}/api-docs` // Use config.port from config
+}});
+}
+{{/if}}
+
+// Catch 404 and forward to error handler
+app.use(notFound);
+
+// Convert errors to ApiError if necessary
+app.use(errorConverter);
+
+// Handle errors
+app.use(errorHandler);
+
+export default app;

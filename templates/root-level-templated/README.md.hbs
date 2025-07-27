@@ -1,11 +1,15 @@
-# 🚀 Node.js Monolithic Backend Template 🚀
+🚀 Node.js Backend Template - {{projectName}} 🚀
 
 [![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+{{#if includeDbMongo}}
 [![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Mongoose](https://img.shields.io/badge/Mongoose-800000?style=for-the-badge&logo=mongoose&logoColor=white)](https://mongoosejs.com/)
+{{/if}}
+{{#if includeTests}}
 [![Jest](https://img.shields.io/badge/Jest-C21325?style=for-the-badge&logo=jest&logoColor=white)](https://jestjs.io/)
+{{/if}}
 [![ESLint](https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white)](https://eslint.org/)
 [![Prettier](https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=white)](https://prettier.io/)
 [![Husky](https://img.shields.io/badge/Husky-black?style=for-the-badge&logo=husky&logoColor=white)](https://typicode.github.io/husky/)
@@ -13,140 +17,188 @@
 
 ---
 
-## 🌟 Overview
-
-This project serves as a **robust, production-ready monolithic Node.js backend template**. It's meticulously crafted with **TypeScript**, **Express.js**, and **MongoDB (Mongoose)**, integrating a comprehensive suite of best practices for security, logging, error handling, testing, and project structure.
+🌟 Overview
+This project (named {{projectName}}) serves as a robust, production-ready monolithic Node.js backend template. It's meticulously crafted with TypeScript, Express.js,
+{{#if includeDbMongo}}
+and MongoDB (Mongoose),
+{{/if}}
+integrating a comprehensive suite of best practices for security, logging, error handling, testing, and project structure.
 
 Think of this as your ultimate starting point for any new backend application, designed to be highly scalable, maintainable, and developer-friendly from day one.
 
----
+✨ Key Features
+TypeScript First: Full type safety across the entire application, enhancing code quality and developer experience.
 
-## ✨ Key Features
+Monolithic Architecture: A well-defined layered structure (Controllers, Services, Repositories, Models) promoting modularity, clear separation of concerns, and easy scalability within a single codebase.
 
-- **TypeScript First:** Full type safety across the entire application, enhancing code quality and developer experience.
-- **Monolithic Architecture:** A well-defined layered structure (Controllers, Services, Repositories, Models) promoting modularity, clear separation of concerns, and easy scalability within a single codebase.
-- **Express.js:** A minimalist, flexible, and fast web framework for building powerful RESTful APIs.
-- **MongoDB & Mongoose:** Seamless integration with MongoDB using Mongoose, a powerful Object Data Modeling (ODM) library for schema definition and data validation.
-- **Winston Logger:** Centralized, structured, and highly configurable logging for better observability in both development and production environments.
-- **Husky & Lint-Staged:** Git hooks that enforce code style (ESLint, Prettier) on staged files before every commit, ensuring a clean and consistent codebase.
-- **Robust Environment Handling:** Secure configuration management with `dotenv-safe`, which validates that all required environment variables are present, preventing critical runtime errors.
-- **Comprehensive Testing Suite:**
-  - **Jest:** A delightful JavaScript testing framework for unit and integration tests.
-  - **Supertest:** For high-level API integration testing, simulating HTTP requests.
-  - Dedicated test database setup and teardown for isolated and reliable integration tests.
-- **API Security Best Practices:**
-  - **Helmet:** Sets various HTTP headers to protect your app from common web vulnerabilities.
-  - **CORS:** Configured for secure Cross-Origin Resource Sharing.
-  - **Express Rate Limit:** Protects against brute-force attacks and API abuse.
-  - **Bcryptjs:** Industry-standard library for secure password hashing.
-  - **JSON Web Tokens (JWT):** For stateless, secure, and scalable authentication.
-- **Advanced Error Handling:** Custom `ApiError` class, centralized error conversion, and a global error middleware for consistent, informative, and secure API error responses. `express-async-handler` eliminates repetitive `try-catch` blocks in async routes.
-- **Input Validation:** Schema-based request validation using **Joi**, ensuring all incoming data conforms to expected formats and constraints.
-- **Graceful Shutdown:** Implements proper handling of Node.js process signals (`SIGTERM`, `SIGINT`, `uncaughtException`, `unhandledRejection`) for clean application exits, releasing resources like database connections.
-- **Enhanced Developer Experience:** `ts-node-dev` provides lightning-fast live reloading during development, boosting productivity.
-- **Absolute Imports:** Configured for cleaner and more readable import paths (e.g., `@services/userService`).
+Express.js: A minimalist, flexible, and fast web framework for building powerful RESTful APIs.
+{{#if includeDbMongo}}
 
----
+MongoDB & Mongoose: Seamless integration with MongoDB using Mongoose, a powerful Object Data Modeling (ODM) library for schema definition and data validation.
+{{/if}}
 
-## 🛠️ Getting Started
+Winston Logger: Centralized, structured, and highly configurable logging for better observability in both development and production environments.
 
+Husky & Lint-Staged: Git hooks that enforce code style (ESLint, Prettier) on staged files before every commit, ensuring a clean and consistent codebase.
+
+Robust Environment Handling: Secure configuration management with dotenv-safe, which validates that all required environment variables are present, preventing critical runtime errors.
+{{#if includeTests}}
+
+Comprehensive Testing Suite:
+
+Jest: A delightful JavaScript testing framework for unit and integration tests.
+
+Supertest: For high-level API integration testing, simulating HTTP requests.
+
+Dedicated test database setup and teardown for isolated and reliable integration tests.
+{{/if}}
+{{#if includeSwagger}}
+
+API Documentation (Swagger/OpenAPI): Automatically generates interactive API documentation.
+{{/if}}
+
+API Security Best Practices:
+
+Helmet: Sets various HTTP headers to protect your app from common web vulnerabilities.
+
+CORS: Configured for secure Cross-Origin Resource Sharing.
+
+Express Rate Limit: Protects against brute-force attacks and API abuse.
+
+Bcryptjs: Industry-standard library for secure password hashing.
+
+JSON Web Tokens (JWT): For stateless, secure, and scalable authentication.
+
+Advanced Error Handling: Custom ApiError class, centralized error conversion, and a global error middleware for consistent, informative, and secure API error responses. express-async-handler eliminates repetitive try-catch blocks in async routes.
+
+Input Validation: Schema-based request validation using Joi, ensuring all incoming data conforms to expected formats and constraints.
+
+Graceful Shutdown: Implements proper handling of Node.js process signals (SIGTERM, SIGINT, uncaughtException, unhandledRejection) for clean application exits, releasing resources like database connections.
+
+Enhanced Developer Experience: ts-node-dev provides lightning-fast live reloading during development, boosting productivity.
+
+Absolute Imports: Configured for cleaner and more readable import paths (e.g., @services/userService).
+{{#if includeDocker}}
+
+Docker Support: Ready-to-use Dockerfile and docker-compose.yml for containerization.
+{{/if}}
+
+🛠️ Getting Started
 Follow these steps to get your development environment up and running.
 
-### Prerequisites
-
+Prerequisites
 Before you begin, ensure you have the following installed:
 
-- **Node.js:** Latest LTS version recommended.
-  - [Download Node.js](https://nodejs.org/en/download/)
-- **npm** or **Yarn:** Node.js package manager. (npm comes with Node.js)
-  - [Install Yarn](https://classic.yarnpkg.com/en/docs/install/)
-- **MongoDB:** A running MongoDB instance (local or remote).
-  - [Install MongoDB Community Edition](https://docs.mongodb.com/manual/installation/)
-  - Alternatively, use a cloud service like [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+Node.js: Latest LTS version recommended.
 
-### Installation
+Download Node.js
 
-1.  **Clone this repository:**
+npm or Yarn: Node.js package manager. (npm comes with Node.js)
 
-    ```bash
-    git clone [https://github.com/your-username/nodejs-monolith-template.git](https://github.com/your-username/nodejs-monolith-template.git) my-awesome-backend
-    cd my-awesome-backend
-    ```
+Install Yarn
+{{#if includeDbMongo}}
 
-    _(If you're using the custom CLI tool, it will handle this step for you!)_
+MongoDB: A running MongoDB instance (local or remote).
 
-2.  **Install project dependencies:**
-    ```bash
-    npm install
-    # or yarn install
-    ```
+Install MongoDB Community Edition
 
-### Environment Variables
+Alternatively, use a cloud service like MongoDB Atlas.
+{{/if}}
+{{#if includeDocker}}
 
-This project uses `dotenv-safe` to manage environment variables securely. It ensures that all variables defined in `.env.example` are present in your `.env` file, preventing unexpected runtime errors.
+Docker (Optional, if using Docker setup):
 
-1.  **Create your `.env` file:**
+Download Docker Desktop
+{{/if}}
 
-    ```bash
-    cp .env.example .env
-    ```
+Installation
+Clone this repository:
 
-2.  **Edit the `.env` file:**
-    Open the newly created `.env` file and fill in your actual configuration values. **Crucially, change `JWT_SECRET` to a strong, random string for production environments!**
+git clone [https://github.com/your-username/nodejs-monolith-template.git](https://github.com/your-username/nodejs-monolith-template.git) {{projectName}}
+cd {{projectName}}
 
-    ```ini
-    # .env
-    NODE_ENV=development
-    PORT=5000
+(If you're using the custom CLI tool, it will handle this step for you!)
 
-    # MongoDB Configuration
-    MONGODB_URI=mongodb://127.0.0.1:27017/your_database_name_dev
-    MONGODB_URI_TEST=mongodb://127.0.0.1:27017/your_database_name_test # Used for integration tests
+Install project dependencies:
 
-    # JWT Secret and Expiration (REQUIRED FOR AUTHENTICATION)
-    JWT_SECRET=YOUR_SUPER_SECRET_JWT_KEY_CHANGE_THIS_IN_PRODUCTION
-    JWT_ACCESS_EXPIRATION_MINUTES=30
-    JWT_REFRESH_EXPIRATION_DAYS=7
+npm install
 
-    # Other app-specific variables
-    # APP_SECRET_KEY=another_secret_key_if_needed
-    ```
+# or yarn install
 
-### Running the Application
+Environment Variables
+This project uses dotenv-safe to manage environment variables securely. It ensures that all variables defined in .env.example are present in your .env file, preventing unexpected runtime errors.
 
-- **Development Mode (with live reloading):**
+Create your .env file:
 
-  ```bash
-  npm run dev
-  # or yarn dev
-  ```
+cp .env.example .env
 
-  The server will start on `http://localhost:<PORT>` (default: `http://localhost:5000`). Any changes to your TypeScript files will automatically restart the server.
+Edit the .env file:
+Open the newly created .env file and fill in your actual configuration values. Crucially, change JWT_SECRET to a strong, random string for production environments!
 
-- **Production Mode (Build and Run):**
-  First, compile the TypeScript code to JavaScript:
-  ```bash
-  npm run build
-  # or yarn build
-  ```
-  Then, start the compiled application:
-  ```bash
-  npm start
-  # or yarn start
-  ```
+# .env
 
----
+NODE_ENV=development
+PORT=5000
 
-## 📂 Project Structure Explained
+{{#if includeDbMongo}}
 
+# MongoDB Configuration
+
+MONGODB_URI=mongodb://127.0.0.1:27017/{{projectName}}\_dev
+MONGODB_URI_TEST=mongodb://127.0.0.1:27017/{{projectName}}\_test # Used for integration tests
+{{/if}}
+
+# JWT Secret and Expiration (REQUIRED FOR AUTHENTICATION)
+
+JWT_SECRET=YOUR_SUPER_SECRET_JWT_KEY_CHANGE_THIS_IN_PRODUCTION
+JWT_ACCESS_EXPIRATION_MINUTES=30
+JWT_REFRESH_EXPIRATION_DAYS=7
+
+# Other app-specific variables
+
+# APP_SECRET_KEY=another_secret_key_if_needed
+
+Running the Application
+Development Mode (with live reloading):
+
+npm run dev
+
+# or yarn dev
+
+The server will start on http://localhost:<PORT> (default: http://localhost:5000). Any changes to your TypeScript files will automatically restart the server.
+
+Production Mode (Build and Run):
+First, compile the TypeScript code to JavaScript:
+
+npm run build
+
+# or yarn build
+
+Then, start the compiled application:
+
+npm start
+
+# or yarn start
+
+{{#if includeDocker}}
+
+Running with Docker:
+If you chose to include Docker setup:
+
+docker-compose up --build
+
+This will build the Docker image and start the application container. Access it via http://localhost:<PORT> (default: http://localhost:5000).
+{{/if}}
+
+📂 Project Structure Explained
 Understanding the project structure is key to navigating and extending this template effectively. Each directory and file has a specific role, adhering to a layered architectural pattern.
 
-nodejs-monolith-template/
+{{projectName}}/
 ├── src/ # 🚀 All your application source code lives here
 │ ├── api/ # Top-level API router, aggregates all domain routes
 │ │ └── index.ts # ➡️ Main entry point for all /api routes.
 │ ├── config/ # ⚙️ Application-wide configurations, constants, and logger setup
-│ │ ├── index.ts # ➡️ Loads environment variables and defines global app settings. Modify for global config changes.
+│ │ ├── env.ts # ➡️ Loads environment variables and defines global app settings. Modify for global config changes.
 │ │ ├── logger.ts # ➡️ Winston logger instance configuration. Modify for logging behavior.
 │ │ └── constants.ts # ➡️ Global immutable constants (e.g., roles, token types). Modify for app-wide constant values.
 │ ├── controllers/ # 🌐 Handle incoming HTTP requests, delegate to services, send responses
@@ -158,10 +210,14 @@ nodejs-monolith-template/
 │ │ ├── notFound.middleware.ts# ➡️ 404 (Not Found) handler. Rarely modify.
 │ │ ├── validation.middleware.ts # ➡️ Joi schema validation. Rarely modify, generic validator.
 │ │ └── rateLimit.middleware.ts # ➡️ API rate limiting. Modify to adjust rate limiting rules.
+{{#if includeDbMongo}}
 │ ├── models/ # 📊 Mongoose schemas and models (Data Layer Definitions)
 │ │ └── user.model.ts # ➡️ Defines the User schema, pre-save hooks, instance/static methods. Modify for schema changes, add new models here.
+{{/if}}
+{{#if includeDbMongo}}
 │ ├── repositories/ # 📦 Data Access Layer (Abstraction over Mongoose models)
 │ │ └── user.repository.ts # ➡️ Encapsulates DB operations for User. Modify for specific DB queries, add new repositories for new models.
+{{/if}}
 │ ├── routes/ # 🛣️ Defines API endpoints for specific domains
 │ │ ├── auth.routes.ts # ➡️ Routes related to authentication. Add/modify auth endpoints, apply middleware.
 │ │ ├── user.routes.ts # ➡️ Routes related to user management. Add/modify user endpoints, apply middleware.
@@ -182,22 +238,34 @@ nodejs-monolith-template/
 │ │ └── pick.ts # ➡️ Utility to pick object properties. Rarely modify.
 │ ├── app.ts # ➡️ Express application setup (global middleware, main router mounting). Modify for global Express settings.
 │ └── server.ts # ➡️ Main server entry point, DB connection, graceful shutdown. Modify for DB connection details, server start/stop.
-├── tests/ # 🧪 Unit and Integration tests
+{{#if includeTests}}
+├── **tests**/ # 🧪 Unit and Integration tests
 │ ├── unit/ # Isolated tests for individual functions/modules
 │ │ └── utils/
 │ │ └── password.test.ts # ➡️ Example unit test. Add unit tests for new utilities/logic.
 │ ├── integration/ # API integration tests (end-to-end API calls)
+{{#if includeDbMongo}}
 │ │ ├── setup.ts # ➡️ Global test setup (e.g., connecting to test DB). Modify for test DB config.
 │ │ ├── teardown.ts # ➡️ Global test teardown (e.g., disconnecting from test DB). Modify for test DB cleanup.
+{{/if}}
 │ │ └── auth.integration.test.ts # ➡️ Example API integration test. Add integration tests for new API endpoints.
+{{/if}}
 ├── .env.example # 📄 Example environment variables. Always update this when adding new env vars.
 ├── .eslintrc.cjs # 🧹 ESLint configuration for code linting. Modify for linting rules.
 ├── .gitignore # 🚫 Files/directories to be ignored by Git. Add new files/folders to ignore.
 ├── .husky/ # 🐶 Git hooks setup (e.g., pre-commit). Rarely modify directly.
 │ └── pre-commit # ➡️ Script to run before committing.
 ├── .lintstagedrc.json # 🎯 Configuration for lint-staged (runs linters on staged files). Modify for pre-commit linting/formatting rules.
+{{#if includeDocker}}
+├── Dockerfile # 🐳 Docker container definition. Modify for specific image needs.
+├── docker-compose.yml # 🐳 Docker Compose for multi-service setup. Modify for additional services.
+├── .dockerignore # 🚫 Files/directories to be ignored by Docker build context. Add new files/folders to ignore.
+{{/if}}
 ├── nodemon.json # 🔄 Configuration for ts-node-dev (development server). Modify for dev server behavior.
 ├── package.json # 📦 Project metadata and dependencies. Add/remove dependencies, define scripts.
+{{#if includeTests}}
+├── jest.config.js # 📝 Jest test runner configuration. Modify for Jest setup.
+{{/if}}
 ├── tsconfig.json # 📝 TypeScript compiler configuration for development. Modify for TS compiler options.
 ├── tsconfig.build.json # 🏗️ TypeScript compiler configuration for production build. Rarely modify.
 └── README.md # 📖 This file! Project documentation.
@@ -233,6 +301,7 @@ This template is built upon a foundation of robust software engineering principl
 
 ## 🧪 Testing
 
+{{#if includeTests}}
 A robust testing strategy is integral to this template. We use **Jest** for all testing, with **Supertest** for API integration tests.
 
 ### Test Structure
@@ -242,11 +311,15 @@ A robust testing strategy is integral to this template. We use **Jest** for all 
 
 ### Test Database Setup
 
+{{#if includeDbMongo}}
 Integration tests connect to a separate MongoDB instance defined by `MONGODB_URI_TEST` in your `.env` file. This ensures that your development and production databases are never affected by tests.
 
 - `__tests__/integration/setup.ts`: This file runs **once before all integration tests**. It connects to your `MONGODB_URI_TEST` database.
 - `__tests__/integration/teardown.ts`: This file runs **once after all integration tests**. It drops the test database and closes the MongoDB connection, ensuring a clean slate for subsequent test runs.
 - `beforeEach` in `setup.ts`: Before _each individual integration test_, all collections in the test database are cleared. This guarantees that each test runs in an isolated, predictable environment.
+  {{else}}
+  (Test database setup details will vary depending on the chosen database. For non-MongoDB setups, this section would be updated.)
+  {{/if}}
 
 ### Running Tests
 
@@ -255,52 +328,65 @@ Integration tests connect to a separate MongoDB instance defined by `MONGODB_URI
   npm test
   # or yarn test
   ```
-- **Run tests in watch mode (re-runs on file changes):**
-  ```bash
-  npm run test:watch
-  # or yarn test:watch
-  ```
-- **Generate a test coverage report:**
-  ```bash
-  npm run test:coverage
-  # or yarn test:coverage
-  ```
-  This will generate a `coverage/` folder with detailed reports on your code coverage.
 
----
+Run tests in watch mode (re-runs on file changes):
 
-## 📜 Scripts
+npm run test:watch
 
-Here are the essential `npm` scripts available in `package.json` to manage your project:
+# or yarn test:watch
 
-- `npm run dev`: Starts the server in **development mode** with live reloading using `ts-node-dev`. This is your primary command during development.
-- `npm run start`: First, builds the TypeScript code, then starts the compiled JavaScript application in **production mode**. Use this for deploying your application.
-- `npm run build`: Compiles TypeScript files from the `src` directory into JavaScript in the `dist` folder, using `tsconfig.build.json` for production-optimized compilation.
-- `npm run lint`: Runs **ESLint** across all TypeScript files to check for code quality issues and style violations.
-- `npm run lint:fix`: Runs ESLint and automatically fixes any fixable code quality or formatting issues.
-- `npm run format`: Formats all `.ts` files in `src` and `__tests__` using **Prettier**, ensuring consistent code style.
-- `npm test`: Executes all unit and integration tests with **Jest**.
-- `npm run test:watch`: Runs Jest in interactive watch mode, re-running tests automatically when files change.
-- `npm run test:coverage`: Runs all tests and generates a detailed code coverage report.
-- `npm run prepare`: Sets up **Husky** Git hooks. This command is typically run automatically after `npm install`.
+Generate a test coverage report:
 
----
+npm run test:coverage
 
-## 🤝 Contributing
+# or yarn test:coverage
 
+This will generate a coverage/ folder with detailed reports on your code coverage.
+{{else}}
+(Testing framework and instructions are not included as per your choices.)
+{{/if}}
+
+📜 Scripts
+Here are the essential npm scripts available in package.json to manage your project:
+
+npm run dev: Starts the server in development mode with live reloading using ts-node-dev. This is your primary command during development.
+
+npm run start: First, builds the TypeScript code, then starts the compiled JavaScript application in production mode. Use this for deploying your application.
+
+npm run build: Compiles TypeScript files from the src directory into JavaScript in the dist folder, using tsconfig.build.json for production-optimized compilation.
+
+npm run lint: Runs ESLint across all TypeScript files to check for code quality issues and style violations.
+
+npm run lint:fix: Runs ESLint and automatically fixes any fixable code quality or formatting issues.
+
+npm run format: Formats all .ts files in src
+{{#if includeTests}}
+and **tests**
+{{/if}}
+using Prettier, ensuring consistent code style.
+{{#if includeTests}}
+
+npm test: Executes all unit and integration tests with Jest.
+
+npm run test:watch: Runs Jest in interactive watch mode, re-running tests automatically when files change.
+
+npm run test:coverage: Runs all tests and generates a detailed code coverage report.
+{{/if}}
+
+npm run prepare: Sets up Husky Git hooks. This command is typically run automatically after npm install.
+
+🤝 Contributing
 We welcome contributions to make this template even better! If you have suggestions, bug reports, or want to contribute code, please feel free to:
 
-1.  **Fork** this repository.
-2.  **Create a new branch** for your feature or bug fix.
-3.  **Commit your changes** following conventional commit messages.
-4.  **Open a Pull Request** with a clear description of your changes.
+Fork this repository.
 
----
+Create a new branch for your feature or bug fix.
 
-## 📄 License
+Commit your changes following conventional commit messages.
 
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+Open a Pull Request with a clear description of your changes.
 
----
+📄 License
+This project is licensed under the MIT License.
 
-Made with ❤️ by Ankit
+Made with ❤️ by {{projectAuthor}}

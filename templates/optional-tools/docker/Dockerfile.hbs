@@ -1,3 +1,5 @@
+# templates/optional-tools/docker/Dockerfile.hbs
+
 # --- Stage 1: Build the application ---
 # Use a Node.js image with a specific version for consistency.
 # Using 'alpine' for smaller image size.
@@ -49,3 +51,8 @@ CMD ["npm", "start"]
 # This checks if your /api/health endpoint is reachable
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
   CMD wget --quiet --tries=1 --timeout=5 -O /dev/null http://localhost:5000/api/health || exit 1
+
+# Optional: Add metadata for the image
+LABEL org.opencontainers.image.source="https://github.com/your-username/{{projectName}}"
+LABEL org.opencontainers.image.description="{{projectDescription}}"
+LABEL org.opencontainers.image.licenses="MIT"

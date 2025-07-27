@@ -1,0 +1,68 @@
+// templates/common/src/config/index.ts.hbs
+
+// Centralized application configuration
+import dotenvSafe from 'dotenv-safe'; // Use direct import for dotenv-safe
+import path from 'path';
+{{#if includeDbMongo}}
+import { ConnectOptions } from 'mongoose'; // Import ConnectOptions conditionally
+{{/if}}
+
+// Load .env variables and validate against .env.example
+// Adjust paths: from src/config/ to project root
+dotenvSafe.config({
+path: path.join(__dirname, '..', '..', '.env'), // Relative path from src/config/ to project root
+example: path.join(__dirname, '..', '..', '.env.example'), // Relative path from src/config/ to project root
+allowEmptyValues: true, // Set to false in production if all values must be non-empty
+});
+
+interface Config {
+env: string;
+port: number;
+{{#if includeDbMongo}}
+mongoose: {
+url: string;
+options: ConnectOptions; // Use ConnectOptions here
+};
+{{/if}}
+jwt: {
+secret: string;
+accessExpirationMinutes: number;
+refreshExpirationDays: number;
+};
+rateLimit: {
+windowMs: number;
+max: number;
+};
+}
+
+const config: Config = {
+env: process.env.NODE_ENV || 'development',
+port: parseInt(process.env.PORT || '5000', 10),
+{{#if includeDbMongo}}
+mongoose: {
+url:
+process.env.NODE_ENV === 'test'
+? process.env.MONGODB_URI_TEST || ''
+: process.env.MONGODB_URI || '',
+options: {
+// Explicitly define some common options to help TypeScript infer the correct type.
+// These options are valid for Mongoose 6+ and are often good defaults.
+serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
+maxPoolSize: 10, // Maintain up to 10 socket connections
+minPoolSize: 1, // Minimum of 1 connection in the pool
+// autoIndex: true, // Set to false in production to prevent performance issues
+} as ConnectOptions, // Explicitly assert type here to ensure correctness
+},
+{{/if}}
+jwt: {
+secret: process.env.JWT_SECRET || 'supersecretjwtkey_please_change_this_in_production',
+accessExpirationMinutes: parseInt(process.env.JWT_ACCESS_EXPIRATION_MINUTES || '30', 10),
+refreshExpirationDays: parseInt(process.env.JWT_REFRESH_EXPIRATION_DAYS || '7', 10),
+},
+rateLimit: {
+windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || (15 * 60 * 1000).toString(), 10), // 15 minutes
+max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10), // Limit each IP to 100 requests per windowMs
+},
+};
+
+export default config; // Retained default export

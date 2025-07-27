@@ -1,0 +1,56 @@
+# templates/optional-tools/docker/docker-compose.yml.hbs
+
+version: '3.8' # Specify Docker Compose file format version
+
+services:
+# Node.js Application Service
+{{projectName}}-app: # Service name dynamically based on project name
+build:
+context: . # Build from the current directory (where Dockerfile is)
+dockerfile: Dockerfile # Specify the Dockerfile to use
+# For development, you might want to use the 'builder' stage if your Dockerfile supports it
+# target: builder # Uncomment if you want to use the builder stage for dev (includes dev dependencies)
+ports:
+- '5000:5000' # Map host port 5000 to container port 5000 (consider making this dynamic later)
+volumes:
+- .:/app # Mount the current host directory into the container's /app directory
+- /app/node_modules # Exclude node_modules from the bind mount to prevent host/container conflicts
+env_file:
+- .env # Mounts the .env file for environment variables, preferred over hardcoding
+environment:
+# These are default values, .env will override them.
+# Only include if you want to set defaults that are not in .env.example
+# NODE_ENV: development # This should ideally come from .env
+# PORT: 5000 # This should ideally come from .env
+# JWT_SECRET: your_dev_jwt_secret # This should ideally come from .env
+# JWT_ACCESS_EXPIRATION_MINUTES: 30 # This should ideally come from .env
+# JWT_REFRESH_EXPIRATION_DAYS: 7 # This should ideally come from .env
+{{#if includeDbMongo}}
+MONGODB_URI: mongodb:27017/{{projectName}}_dev # Connect to the 'mongodb' service
+MONGODB_URI_TEST: mongodb:27017/{{projectName}}_test # For running tests inside container
+{{/if}}
+depends_on:
+{{#if includeDbMongo}}
+- mongodb # Ensure mongodb service starts before the app service
+{{/if}}
+command: npm run dev # Override the CMD in Dockerfile to run dev script for live reloading
+
+{{#if includeDbMongo}}
+# MongoDB Database Service
+mongodb:
+image: mongo:6.0 # Use a specific MongoDB version
+container_name: {{projectName}}-mongodb # Dynamic container name
+ports:
+- '27017:27017' # Map host port 27017 to container port 27017
+volumes:
+- mongodb_data:/data/db # Persist MongoDB data to a named volume
+environment:
+# Optional: MongoDB authentication (recommended for production)
+# MONGO_INITDB_ROOT_USERNAME: root
+# MONGO_INITDB_ROOT_PASSWORD: password
+{{/if}}
+
+volumes:
+{{#if includeDbMongo}}
+mongodb_data: # Define the named volume for MongoDB data persistence
+{{/if}}

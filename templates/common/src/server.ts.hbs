@@ -1,30 +1,37 @@
 // Main server entry point, database connection, graceful shutdown
+{{#if includeDbMongo}}
 import mongoose from 'mongoose';
-import config from '@config/index';
-import logger from '@utils/logger';
+{{/if}}
+import config from '@config/index'; // Use env directly from config/index
+import logger from '@utils/logger'; // Use logger directly from utils/logger
 import app from './app';
 
 let server: any; // Type for the HTTP server instance
 
+{{#if includeDbMongo}}
 const connectToDatabase = async () => {
   try {
-    await mongoose.connect(config.mongoose.url, config.mongoose.options);
+    // Assuming mongoose.url and mongoose.options are directly in env or derived from it
+    await mongoose.connect(config.mongoose.url,config.mongoose.options); // Use config.mongoose directly
     logger.info('Connected to MongoDB');
   } catch (error) {
     logger.error('Could not connect to MongoDB:', error);
     process.exit(1); // Exit process on DB connection failure
   }
 };
+{{/if}}
 
 const startServer = async () => {
+  {{#if includeDbMongo}}
   await connectToDatabase();
+  {{/if}}
 
-  server = app.listen(config.port, () => {
+  server = app.listen(config.port, () => { // Use config.port
     logger.info('Server is running',{
       meta:{
-        PORT: config.port,
-        SERVER_URL : `http://localhost:${config.port}`,
-        ENVIRONMENT: config.env
+        PORT: config.port, // Use config.port
+        SERVER_URL : `http://localhost:${config.port}`, // Use config.port
+        ENVIRONMENT: config.env // Use config.env
       }
     });
   });
@@ -34,7 +41,21 @@ const exitHandler = () => {
   if (server) {
     server.close(() => {
       logger.info('Server closed');
-      process.exit(1);
+      {{#if includeDbMongo}}
+      // Close database connections
+      mongoose.connection
+        .close()
+        .then(() => {
+          logger.info('MongoDB connection closed.');
+          process.exit(1); // Exit after DB close
+        })
+        .catch((err) => {
+          logger.error('Error closing MongoDB connection:', err);
+          process.exit(1);
+        });
+      {{else}}
+      process.exit(1); // Exit directly if no DB
+      {{/if}}
     });
   } else {
     process.exit(1);
@@ -61,7 +82,7 @@ process.on('SIGTERM', () => {
   if (server) {
     server.close(() => {
       logger.info('Process terminated!');
-      // Optional: Close database connections here if they're not closed by server.close()
+      {{#if includeDbMongo}}
       mongoose.connection
         .close()
         .then(() => {
@@ -72,6 +93,9 @@ process.on('SIGTERM', () => {
           logger.error('Error closing MongoDB connection:', err);
           process.exit(1);
         });
+      {{else}}
+      process.exit(0);
+      {{/if}}
     });
   } else {
     process.exit(0);
@@ -84,6 +108,7 @@ process.on('SIGINT', () => {
   if (server) {
     server.close(() => {
       logger.info('Process terminated!');
+      {{#if includeDbMongo}}
       mongoose.connection
         .close()
         .then(() => {
@@ -94,6 +119,9 @@ process.on('SIGINT', () => {
           logger.error('Error closing MongoDB connection:', err);
           process.exit(1);
         });
+      {{else}}
+      process.exit(0);
+      {{/if}}
     });
   } else {
     process.exit(0);
